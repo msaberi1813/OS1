@@ -1,0 +1,34 @@
+diff -uNr origin-linux/kernel/sched/core.c modified-linux/kernel/sched/core.c
+--- origin-linux/kernel/sched/core.c	2018-01-17 12:15:30.000000000 +0330
++++ modified-linux/kernel/sched/core.c	2018-01-23 16:57:07.251998541 +0330
+@@ -2343,7 +2343,15 @@
+ 	/*
+ 	 * Make sure we do not leak PI boosting priority to the child.
+ 	 */
+-	p->prio = current->normal_prio;
++	 /* Lorenzo Nava: force policy to RR */
++     if (p->policy == SCHED_NORMAL) {
++         p->prio = current->normal_prio - NICE_WIDTH -
++                 PRIO_TO_NICE(current->static_prio);
++         p->normal_prio = p->prio;
++         p->rt_priority = p->prio;
++         p->policy = SCHED_FIFO;
++         p->static_prio = NICE_TO_PRIO(0);
++     }
+ 
+ 	/*
+ 	 * Revert to default priority/policy on fork if requested.
+@@ -4251,6 +4259,13 @@
+ 		.sched_nice	= PRIO_TO_NICE(p->static_prio),
+ 	};
+ 
++	/* Lorenzo Nava: force policy of process to RR */
++      if (attr.sched_policy == SCHED_NORMAL) {
++          attr.sched_priority = param->sched_priority -
++                  NICE_WIDTH - attr.sched_nice;
++          attr.sched_policy = SCHED_RR;
++      }
++
+ 	/* Fixup the legacy SCHED_RESET_ON_FORK hack. */
+ 	if ((policy != SETPARAM_POLICY) && (policy & SCHED_RESET_ON_FORK)) {
+ 		attr.sched_flags |= SCHED_FLAG_RESET_ON_FORK;
