@@ -22,6 +22,16 @@ int lsh_launch(char **args)
   pid = fork();
   if (pid == 0) {
     // Child process
+    int i=0;
+    while(args[i]){
+    	if(args[i][0]=='>'){
+    		args[i]=NULL;
+    		FILE * f= fopen(args[i+1],"a");
+    		dup2(fileno(f), fileno(stdout));
+    		break;
+    	}
+    	i++;
+    }
     if (execvp(args[0], args) == -1) {
       perror("lsh");
     }
