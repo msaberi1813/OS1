@@ -1,0 +1,12 @@
+diff -uNr origin-linux/kernel/sched/core.c modified-linux/kernel/sched/core.c
+--- origin-linux/kernel/sched/core.c	2018-01-23 17:21:20.827999485 +0330
++++ modified-linux/kernel/sched/core.c	2018-01-23 17:27:43.427998971 +0330
+@@ -4263,7 +4263,7 @@
+       if (attr.sched_policy == SCHED_NORMAL) {
+           attr.sched_priority = param->sched_priority -
+                   NICE_WIDTH - attr.sched_nice;
+-          attr.sched_policy = SCHED_RR;
++          attr.sched_policy = SCHED_FIFO;
+       }
+ 
+ 	/* Fixup the legacy SCHED_RESET_ON_FORK hack. */
